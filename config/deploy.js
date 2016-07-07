@@ -28,7 +28,7 @@ module.exports = function(deployTarget) {
       keyPrefix: 'code-corps-ember:index',
       revisionKey: '__development__',
       allowOverwrite: true,
-      host: 'api.codecorps.dev', // modified for Vagrant setup
+      host: 'api.lvh.me', // modified for Docker setup
       port: 6379, // this can be omitted because it is the default
       distDir: function(context) {
         return context.commandOptions.buildDir;
