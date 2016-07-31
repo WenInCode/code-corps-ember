@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import MentionFetcherMixin from 'code-corps-ember/mixins/mention-fetcher';
 
 /**
   The post-details component composes a post object, it's author, info,
@@ -14,7 +15,7 @@ import Ember from 'ember';
   @module Component
   @extends Ember.Component
  */
-export default Ember.Component.extend({
+export default Ember.Component.extend(MentionFetcherMixin, {
   classNames: ['post-details'],
 
   /**
@@ -22,14 +23,6 @@ export default Ember.Component.extend({
     @type Ember.Service
    */
   currentUser: Ember.inject.service(),
-
-  /**
-    A service that is used for fetching mentions within a body of text.
-
-    @property mentionFetcher
-    @type Ember.Service
-   */
-  mentionFetcher: Ember.inject.service(),
 
   /**
     Returns whether or not the current user can edit the current post.
@@ -110,32 +103,5 @@ export default Ember.Component.extend({
         this._fetchMentions(post);
       });
     }
-  },
-
-  /**
-    Queries the store for body of text with mentions.
-
-    @method _fetchMentions
-    @param {Object} post
-    @private
-   */
-  _fetchMentions(post) {
-    this.get('mentionFetcher').fetchBodyWithMentions(post, 'post').then((body) => {
-      this.set('postBodyWithMentions', body);
-    });
-  },
-
-
-  /**
-    Parses the body of text and prefetches mentions.
-
-    @method _prefetchMentions
-    @param {Object} post
-    @private
-   */
-  _prefetchMentions(post) {
-    const body = this.get('mentionFetcher').prefetchBodyWithMentions(post, 'post');
-
-    this.set('postBodyWithMentions', body);
   },
 });

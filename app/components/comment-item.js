@@ -1,11 +1,11 @@
 import Ember from 'ember';
+import MentionFetcherMixin from 'code-corps-ember/mixins/mention-fetcher';
 
-export default Ember.Component.extend({
+export default Ember.Component.extend(MentionFetcherMixin, {
   classNames: ['comment-item', 'timeline-comment-wrapper'],
   classNameBindings: ['isEditing:editing'],
 
   currentUser: Ember.inject.service(),
-  mentionFetcher: Ember.inject.service(),
 
   canEdit: Ember.computed.alias('currentUserIsCommentAuthor'),
   commentAuthorId: Ember.computed.alias('comment.user.id'),
@@ -39,16 +39,5 @@ export default Ember.Component.extend({
         this._fetchMentions(comment);
       });
     },
-  },
-
-  _fetchMentions(comment) {
-    this.get('mentionFetcher').fetchBodyWithMentions(comment, 'comment').then((body) => {
-      this.set('commentBodyWithMentions', body);
-    });
-  },
-
-  _prefetchMentions(comment) {
-    let body = this.get('mentionFetcher').prefetchBodyWithMentions(comment, 'comment');
-    this.set('commentBodyWithMentions', body);
   },
 });
