@@ -1,20 +1,13 @@
 import Ember from 'ember';
+import PostEditMixin from 'code-corps-ember/mixins/post-edit';
 
-export default Ember.Component.extend({
+export default Ember.Component.extend(PostEditMixin, {
   classNames: ['comment-item', 'timeline-comment-wrapper'],
   classNameBindings: ['isEditing:editing'],
 
-  currentUser: Ember.inject.service(),
   mentionFetcher: Ember.inject.service(),
 
-  canEdit: Ember.computed.alias('currentUserIsCommentAuthor'),
-  commentAuthorId: Ember.computed.alias('comment.user.id'),
-  currentUserId: Ember.computed.alias('currentUser.user.id'),
-  currentUserIsCommentAuthor: Ember.computed('currentUserId', 'commentAuthorId', function() {
-    let userId = parseInt(this.get('currentUserId'), 10);
-    let authorId = parseInt(this.get('commentAuthorId'), 10);
-    return userId === authorId;
-  }),
+  authorId: Ember.computed.alias('comment.user.id'),
 
   init() {
     this.set('isEditing', false);
@@ -23,10 +16,6 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    cancel() {
-      this.set('isEditing', false);
-    },
-
     edit() {
       this.set('isEditing', true);
     },

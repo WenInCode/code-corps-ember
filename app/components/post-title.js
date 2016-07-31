@@ -1,35 +1,14 @@
 import Ember from 'ember';
+import PostEditMixin from 'code-corps-ember/mixins/post-edit';
 
 /**
   @class post-title
   @module Component
   @extends Ember.Component
  */
-export default Ember.Component.extend({
+export default Ember.Component.extend(PostEditMixin, {
   classNames: ['post-title'],
   classNameBindings: ['isEditing:editing'],
-
-  /**
-    @property currentUser
-    @type Ember.Service
-   */
-  currentUser: Ember.inject.service(),
-
-  /**
-    Returns whether or not the current user can edit the current post.
-
-    @property canEdit
-    @type Boolean
-   */
-  canEdit: Ember.computed.alias('currentUserIsPostAuthor'),
-
-  /**
-    Returns the current user's ID.
-
-    @property currentUserId
-    @type Number
-   */
-  currentUserId: Ember.computed.alias('currentUser.user.id'),
 
   /**
     Returns the post author's ID.
@@ -37,20 +16,7 @@ export default Ember.Component.extend({
     @property postAuthorId
     @type Number
    */
-  postAuthorId: Ember.computed.alias('post.user.id'),
-
-  /**
-    Consumes `currentUserId` and `postAuthorId` and returns if the current user
-    is the post author.
-
-    @property currentUserIsPostAuthor
-    @type Boolean
-   */
-  currentUserIsPostAuthor: Ember.computed('currentUserId', 'postAuthorId', function() {
-    let userId = parseInt(this.get('currentUserId'), 10);
-    let authorId = parseInt(this.get('postAuthorId'), 10);
-    return userId === authorId;
-  }),
+  authorId: Ember.computed.alias('post.user.id'),
 
   init() {
     this._super(...arguments);
@@ -60,14 +26,6 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    /**
-      Action that sets the `isEditing` property to `false`
-
-      @method cancel
-     */
-    cancel() {
-      this.set('isEditing', false);
-    },
 
     /**
       Action that set the `isEditing` property to true and sets the `newTitle`

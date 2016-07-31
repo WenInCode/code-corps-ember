@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import PostEditMixin from 'code-corps-ember/mixins/post-edit';
 
 /**
   The post-details component composes a post object, it's author, info,
@@ -14,14 +15,8 @@ import Ember from 'ember';
   @module Component
   @extends Ember.Component
  */
-export default Ember.Component.extend({
+export default Ember.Component.extend(PostEditMixin, {
   classNames: ['post-details'],
-
-  /**
-    @property currentUser
-    @type Ember.Service
-   */
-  currentUser: Ember.inject.service(),
 
   /**
     A service that is used for fetching mentions within a body of text.
@@ -32,44 +27,15 @@ export default Ember.Component.extend({
   mentionFetcher: Ember.inject.service(),
 
   /**
-    Returns whether or not the current user can edit the current post.
+    Returns the author's ID.
 
-    @property canEdit
-    @type Boolean
-   */
-  canEdit: Ember.computed.alias('currentUserIsPostAuthor'),
-
-  /**
-    Returns the current user's ID.
-
-    @property currentUserId
+    @property authorId
     @type Number
    */
-  currentUserId: Ember.computed.alias('currentUser.user.id'),
-
-  /**
-    Returns the post author's ID.
-
-    @property postAuthorId
-    @type Number
-   */
-  postAuthorId: Ember.computed.alias('post.user.id'),
-
-  /**
-    Consumes `currentUserId` and `postAuthorId` and returns if the current user
-    is the post author.
-
-    @property currentUserIsPostAuthor
-    @type Boolean
-   */
-  currentUserIsPostAuthor: Ember.computed('currentUserId', 'postAuthorId', function() {
-    let userId = parseInt(this.get('currentUserId'), 10);
-    let authorId = parseInt(this.get('postAuthorId'), 10);
-    return userId === authorId;
-  }),
+  authorId: Ember.computed.alias('post.user.id'),
 
   init() {
-    this.set('isEditingBody', false);
+    this.set('isEditing', false);
     this._prefetchMentions(this.get('post'));
     return this._super(...arguments);
   },
@@ -77,22 +43,12 @@ export default Ember.Component.extend({
   actions: {
 
     /**
-      Action that stops the editing of the corresponding post.
-
-      @method cancelEditingPostBody
-     */
-    cancelEditingPostBody() {
-      this.set('isEditingBody', false);
-    },
-
-
-    /**
       Action that sets the corresponding post to edit mode.
 
       @method editPostBody
      */
-    editPostBody() {
-      this.set('isEditingBody', true);
+    edit() {
+      this.set('isEditing', true);
     },
 
     /**
@@ -101,12 +57,12 @@ export default Ember.Component.extend({
 
       @method savePostBody
      */
-    savePostBody() {
+    save() {
       const component = this;
       const post = this.get('post');
 
       post.save().then((post) => {
-        component.set('isEditingBody', false);
+        component.set('isEditing', false);
         this._fetchMentions(post);
       });
     }
@@ -124,7 +80,6 @@ export default Ember.Component.extend({
       this.set('postBodyWithMentions', body);
     });
   },
-
 
   /**
     Parses the body of text and prefetches mentions.
